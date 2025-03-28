@@ -1,0 +1,1 @@
+public class FiguraPlana {    private FiguraGeometrica[] figuraGeometrica;}
