@@ -8,12 +8,31 @@ on:
 jobs:
   sonarqube:
     name: SonarQube
-    runs-on: macos-latest
+    runs-on: ubuntu-latest  # Cambiado de macos-latest a ubuntu-latest (más estable)
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      # PASO NUEVO 1: Instalar Java
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      
+      # PASO NUEVO 2: Compilar el código Java
+      - name: Compile Java files
+        run: |
+          mkdir -p build/classes
+          javac -d build/classes *.java
+      
+      # PASO NUEVO 3: Ejecutar SonarQube con la ruta de los .class
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.java.binaries=build/classes
+            -Dsonar.sources=.
