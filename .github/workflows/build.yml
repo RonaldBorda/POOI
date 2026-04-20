@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Importante para un análisis preciso
+          fetch-depth: 0
       
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -19,14 +19,13 @@ jobs:
           java-version: 17
           distribution: 'temurin'
       
-      # PASO CRÍTICO: Compilar el código Java para generar los .class
+      # Compilar todos los archivos .java de la raíz
       - name: Compile Java project
         run: |
-          # Crea un directorio para los archivos compilados
+          # Crear directorio para archivos compilados
           mkdir -p build/classes
-          # Compila todos los archivos .java del proyecto
-          # Asume que tu código fuente está en ./src
-          javac -d build/classes $(find ./src -name "*.java")
+          # Compilar todos los archivos .java en la raíz
+          javac -d build/classes *.java
       
       - name: Cache SonarQube packages
         uses: actions/cache@v4
@@ -34,7 +33,7 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
       
-      # PASO PRINCIPAL: Ejecutar el análisis con SonarScanner
+      # Ejecutar análisis de SonarQube
       - name: SonarQube Cloud Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
